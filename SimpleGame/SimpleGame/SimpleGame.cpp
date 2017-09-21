@@ -14,8 +14,10 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\freeglut.h"
 
 #include "Renderer.h"
+#include "Object.h"
 
 Renderer *g_Renderer = NULL;
+Object *object = NULL;
 
 void RenderScene(void)
 {
@@ -24,6 +26,7 @@ void RenderScene(void)
 
 	// Renderer Test
 	g_Renderer->DrawSolidRect(0, 0, 0, 4, 1, 0, 1, 1);
+	object->draw(10, 10, 0);
 
 	glutSwapBuffers();
 }
@@ -69,6 +72,7 @@ int main(int argc, char **argv)
 
 	// Initialize Renderer
 	g_Renderer = new Renderer(500, 500);
+	object = new Object();
 	if (!g_Renderer->IsInitialized())
 	{
 		std::cout << "Renderer could not be initialized.. \n";
