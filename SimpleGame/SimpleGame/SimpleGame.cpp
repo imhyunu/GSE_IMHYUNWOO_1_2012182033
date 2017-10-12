@@ -21,6 +21,10 @@ Renderer *g_Renderer = NULL;
 Object *object = NULL;
 list<Object*> objects;
 
+enum {LEFTDOWN, LEFTUP};
+
+int mousestate = LEFTUP;
+
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -46,8 +50,12 @@ void Idle(void)
 void MouseInput(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		mousestate = LEFTDOWN;
+	}
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP && mousestate == LEFTDOWN) {
 		object = new Object(x-250,250 - y, 0);
 		objects.push_back(object);
+		mousestate = LEFTUP;
 	}
 	RenderScene();
 }

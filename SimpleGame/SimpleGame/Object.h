@@ -19,7 +19,7 @@ uniform_int_distribution<int> range(-20, 20);
 class Object : public Renderer{
 private:
 	float x, y, z;
-	float size = 5.0f;
+	float size = 20.0f;
 	float r = 1.0f, g = 0.0f, b = 0.0f;
 	float a = 0.0f;
 	pair<float, float> v = {1, 1};
