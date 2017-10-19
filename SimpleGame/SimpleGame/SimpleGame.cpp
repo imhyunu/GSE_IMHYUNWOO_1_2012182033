@@ -15,15 +15,14 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\freeglut.h"
 
 #include "Renderer.h"
-#include "Object.h"
+#include "SceneMgr.h"
 
 Renderer *g_Renderer = NULL;
-Object *object = NULL;
-list<Object*> objects;
+SceneMgr *sceneMgr = NULL;
 
-enum {LEFTDOWN, LEFTUP};
+enum {LEFTMOUSEDOWN, LEFTMOSUEUP};
 
-int mousestate = LEFTUP;
+int mousestate = LEFTMOSUEUP;
 
 void RenderScene(void)
 {
@@ -33,11 +32,7 @@ void RenderScene(void)
 	//object->update();
 	// Renderer Test
 	g_Renderer->DrawSolidRect(0, 0, 0, 4, 1, 0, 1, 1);
-	if (!objects.empty()) {
-		for (auto d : objects) {
-			d->draw();
-		}
-	}
+	sceneMgr->draw();
 
 	glutSwapBuffers();
 }
@@ -50,12 +45,11 @@ void Idle(void)
 void MouseInput(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		mousestate = LEFTDOWN;
+		mousestate = LEFTMOUSEDOWN;
 	}
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP && mousestate == LEFTDOWN) {
-		object = new Object(x-250,250 - y, 0);
-		objects.push_back(object);
-		mousestate = LEFTUP;
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP && mousestate == LEFTMOUSEDOWN) {
+		sceneMgr->input(x - 250, 250 - y);
+		mousestate = LEFTMOSUEUP;
 	}
 	RenderScene();
 }
@@ -71,14 +65,10 @@ void SpecialKeyInput(int key, int x, int y)
 }
 
 void Update(int value) {
-	if (!objects.empty()) {
-		for (auto d : objects) {
-			d->update();
-		}
-		objects.remove_if( [](Object* a) { return a->out(); } );
+	sceneMgr->update();
+	if (sceneMgr->collsion()) {
+
 	}
-	
-	cout << objects.size() << endl;
 	glutTimerFunc(100, Update, 1);
 }
 
@@ -103,6 +93,7 @@ int main(int argc, char **argv)
 
 	// Initialize Renderer
 	g_Renderer = new Renderer(500, 500);
+	sceneMgr = new SceneMgr();
 	if (!g_Renderer->IsInitialized())
 	{
 		std::cout << "Renderer could not be initialized.. \n";
