@@ -35,21 +35,4 @@ public:
 			m_objects[i]->update();
 	}
 	int size() const { return count; }
-	bool collsion(Object& a, Object& b) {
-		float *aBox = a.collsion();
-		float *bBox = b.collsion();
-		if (aBox[0] > bBox[1])
-			return false;
-		if (aBox[1] < bBox[0])
-			return false;
-		if (aBox[3] > bBox[4])
-			return false;
-		if (aBox[4] < bBox[3])
-			return false;
-		return true;
-	}
-	void objectscolorchange(int key) {
-		for (int i = 0; i < count; ++i)
-			m_objects[i]->changecolor(key);
-	}
 };

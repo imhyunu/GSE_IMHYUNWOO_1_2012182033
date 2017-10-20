@@ -48,7 +48,7 @@ void MouseInput(int button, int state, int x, int y)
 		mousestate = LEFTMOUSEDOWN;
 	}
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP && mousestate == LEFTMOUSEDOWN) {
-		sceneMgr->input(x - 250, 250 - y);
+		sceneMgr->input((float)(x - 250), (float)(250 - y));
 		mousestate = LEFTMOSUEUP;
 	}
 	RenderScene();
@@ -66,9 +66,6 @@ void SpecialKeyInput(int key, int x, int y)
 
 void Update(int value) {
 	sceneMgr->update();
-	if (sceneMgr->collsion()) {
-
-	}
 	glutTimerFunc(100, Update, 1);
 }
 
