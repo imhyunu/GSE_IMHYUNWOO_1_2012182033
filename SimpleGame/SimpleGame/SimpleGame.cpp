@@ -13,7 +13,6 @@ but WITHOUT ANY WARRANTY.
 #include <list>
 #include "Dependencies\glew.h"
 #include "Dependencies\freeglut.h"
-
 #include "Renderer.h"
 #include "SceneMgr.h"
 
@@ -29,9 +28,8 @@ void RenderScene(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	//object->update();
-	// Renderer Test
-	g_Renderer->DrawSolidRect(0, 0, 0, 4, 1, 0, 1, 1);
+	sceneMgr->update();
+
 	sceneMgr->draw();
 
 	glutSwapBuffers();
@@ -64,10 +62,10 @@ void SpecialKeyInput(int key, int x, int y)
 	RenderScene();
 }
 
-void Update(int value) {
+/*void Update(int value) {
 	sceneMgr->update();
 	glutTimerFunc(100, Update, 1);
-}
+}*/
 
 int main(int argc, char **argv)
 {
@@ -77,7 +75,6 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(500, 500);
 	glutCreateWindow("Game Software Engineering KPU");
-
 	glewInit();
 	if (glewIsSupported("GL_VERSION_3_0"))
 	{
@@ -95,13 +92,13 @@ int main(int argc, char **argv)
 	{
 		std::cout << "Renderer could not be initialized.. \n";
 	}
-
+	
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
 	glutKeyboardFunc(KeyInput);
 	glutMouseFunc(MouseInput);
 	glutSpecialFunc(SpecialKeyInput);
-	glutTimerFunc(100, Update, 1);
+	/*glutTimerFunc(100, Update, 1);*/
 
 	glutMainLoop();
 
