@@ -9,14 +9,11 @@ but WITHOUT ANY WARRANTY.
 */
 
 #include "stdafx.h"
-#include <iostream>
-#include <list>
 #include "Dependencies\glew.h"
 #include "Dependencies\freeglut.h"
-#include "Renderer.h"
 #include "SceneMgr.h"
 
-Renderer *g_Renderer = NULL;
+//Renderer *g_Renderer = NULL;
 SceneMgr *sceneMgr = NULL;
 
 enum {LEFTMOUSEDOWN, LEFTMOSUEUP};
@@ -85,24 +82,16 @@ int main(int argc, char **argv)
 		std::cout << "GLEW 3.0 not supported\n ";
 	}
 
-	// Initialize Renderer
-	g_Renderer = new Renderer(500, 500);
 	sceneMgr = new SceneMgr();
-	if (!g_Renderer->IsInitialized())
-	{
-		std::cout << "Renderer could not be initialized.. \n";
-	}
 	
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
 	glutKeyboardFunc(KeyInput);
 	glutMouseFunc(MouseInput);
 	glutSpecialFunc(SpecialKeyInput);
-	/*glutTimerFunc(100, Update, 1);*/
 
 	glutMainLoop();
 
-	delete g_Renderer;
 
     return 0;
 }
