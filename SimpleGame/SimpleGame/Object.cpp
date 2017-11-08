@@ -1,18 +1,40 @@
 #include "stdafx.h"
 #include "Object.h"
 
-Object::Object(float ox, float oy) {
+/*Object::Object(float ox, float oy) {
 	x = ox; y = oy; z = 0;
 	float sub = (float)rand() / (float)RAND_MAX;
 	if ((float)rand() / (float)RAND_MAX < 0.5)		sub *= -1;
 	v.first = sub * veloc * PIXELPERMETER;
 	v.second = (sqrt(1 - (sub * sub))) * veloc * PIXELPERMETER;
 	if ((float)rand() / (float)RAND_MAX < 0.5)		v.second *= -1;
+}*/
+
+Object::Object(
+	float oX, float oY, 
+	float oSpeed, float oLife, float oSize,
+	float oR, float oG, float oB
+	) {
+	x = oX; y = oY; z = 0;
+	veloc = oSpeed;		size = oSize;	life = oLife;
+	r = oR;				g = oG;			b = oB;
+
+	float  sub = (float)rand() / (float)RAND_MAX;
+	if ((float)rand() / (float)RAND_MAX < 0.5)		sub *= -1;
+	v.first = sub * veloc;
+	v.second = (sqrt(1 - (sub * sub))) * veloc;
+	if ((float)rand() / (float)RAND_MAX < 0.5)		v.second *= -1;
+	
+}
+
+Object::~Object() {
+	delete collbox;
 }
 
 void Object::update(float frame_time) {
 	x += (v.first * frame_time / 1000);
 	y += (v.second * frame_time / 1000);
+	life -= (frame_time / 1000);
 	if (x <= -250) {
 		x = -245;
 		v.first *= -1;

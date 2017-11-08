@@ -16,16 +16,20 @@ but WITHOUT ANY WARRANTY.
 //Renderer *g_Renderer = NULL;
 SceneMgr *sceneMgr = NULL;
 
-enum {LEFTMOUSEDOWN, LEFTMOSUEUP};
+enum {LEFT_MOUSE_DOWN, LEFT_MOSUE_UP, RIGHT_MOUSE_DOWN, RIGHT_MOUSE_UP};
 
-int mousestate = LEFTMOSUEUP;
+int mousestate = LEFT_MOSUE_UP;
+clock_t current_time = clock();
+clock_t frame_time;
 
 void RenderScene(void)
 {
+	frame_time = clock() - current_time;
+	current_time += frame_time;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	sceneMgr->update();
+	sceneMgr->update((float)frame_time);
 
 	sceneMgr->draw();
 
@@ -40,11 +44,18 @@ void Idle(void)
 void MouseInput(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		mousestate = LEFTMOUSEDOWN;
+		mousestate = LEFT_MOUSE_DOWN;
 	}
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP && mousestate == LEFTMOUSEDOWN) {
-		sceneMgr->input((float)(x - 250), (float)(250 - y));
-		mousestate = LEFTMOSUEUP;
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP && mousestate == LEFT_MOUSE_DOWN) {
+		sceneMgr->input((float)(x - 250), (float)(250 - y), OBJECT_CHARACTER);
+		mousestate = LEFT_MOSUE_UP;
+	}
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		mousestate = RIGHT_MOUSE_DOWN;
+	}
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP, mousestate == RIGHT_MOUSE_DOWN) {
+		sceneMgr->input((float)(x - 250), (float)(250 - y), OBJECT_BULLET);
+		mousestate = RIGHT_MOUSE_UP;
 	}
 	RenderScene();
 }

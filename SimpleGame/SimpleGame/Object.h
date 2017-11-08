@@ -12,8 +12,6 @@ using namespace std;
 
 enum { RED, WHITE };
 
-#define PIXELPERMETER 20.0f
-
 class Object{
 public:
 
@@ -24,10 +22,15 @@ public:
 	float veloc = 7;
 	float life = 3;
 	float nlife = 0;
-	pair<float, float> v {1.0f, 1.0f};
+	pair<float, float> v {0.0f, 0.0f};
 	CollBox* collbox;
 
-	Object(float ox, float oy);
+	Object(
+		float oX, float oY, 
+		float oSpeed, float oLife, float oSize,
+		float oR, float oG, float oB
+	);
+	~Object();
 
 	void update(float frame_time);
 
@@ -35,4 +38,7 @@ public:
 
 	void changecolor(int key);
 
+	float getLife() { return life; }
+	void damageLife(float num) { life -= num; }
+	bool lifeOff() { return (life < 0.0); }
 };
