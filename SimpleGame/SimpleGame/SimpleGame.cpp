@@ -16,7 +16,7 @@ but WITHOUT ANY WARRANTY.
 //Renderer *g_Renderer = NULL;
 SceneMgr *sceneMgr = NULL;
 
-enum {LEFT_MOUSE_DOWN, LEFT_MOSUE_UP, RIGHT_MOUSE_DOWN, RIGHT_MOUSE_UP};
+enum { LEFT_MOUSE_DOWN, LEFT_MOSUE_UP, RIGHT_MOUSE_DOWN, RIGHT_MOUSE_UP };
 
 int mousestate = LEFT_MOSUE_UP;
 clock_t current_time = clock();
@@ -71,8 +71,8 @@ void SpecialKeyInput(int key, int x, int y)
 }
 
 /*void Update(int value) {
-	sceneMgr->update();
-	glutTimerFunc(100, Update, 1);
+sceneMgr->update();
+glutTimerFunc(100, Update, 1);
 }*/
 
 int main(int argc, char **argv)
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 	}
 
 	sceneMgr = new SceneMgr();
-	
+
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
 	glutKeyboardFunc(KeyInput);
@@ -104,6 +104,6 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 
-    return 0;
+	return 0;
 }
 
