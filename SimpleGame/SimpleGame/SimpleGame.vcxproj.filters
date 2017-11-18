@@ -30,16 +30,13 @@
     <ClInclude Include="Renderer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="LoadPng.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="SceneMgr.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionBox.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadPng.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,13 +50,13 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="LoadPng.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="SceneMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadPng.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

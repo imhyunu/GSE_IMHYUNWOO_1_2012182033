@@ -1,80 +1,61 @@
 #include "stdafx.h"
 #include "Object.h"
 
-/*Object::Object(float ox, float oy) {
-x = ox; y = oy; z = 0;
-float sub = (float)rand() / (float)RAND_MAX;
-if ((float)rand() / (float)RAND_MAX < 0.5)		sub *= -1;
-v.first = sub * veloc * PIXELPERMETER;
-v.second = (sqrt(1 - (sub * sub))) * veloc * PIXELPERMETER;
-if ((float)rand() / (float)RAND_MAX < 0.5)		v.second *= -1;
-}*/
 
-Object::Object(
-	float oX, float oY,
-	float oSpeed, float oLife, float oSize,
-	float oR, float oG, float oB
-) {
-	x = oX; y = oY; z = 0;
-	veloc = oSpeed;		size = oSize;	life = oLife;
-	r = oR;				g = oG;			b = oB;
-
-	bulletCooltime = 0.0f;
-	arrowCooltime = 0.0f;
-
-	float  sub = (float)rand() / (float)RAND_MAX;
-	if ((float)rand() / (float)RAND_MAX < 0.5)		sub *= -1;
-	v.first = sub * veloc;
-	v.second = (sqrt(1 - (sub * sub))) * veloc;
-	if ((float)rand() / (float)RAND_MAX < 0.5)		v.second *= -1;
-
+Object::Object(float pX, float pY, float pZ, float pType, int pTeam, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA) {
+	x = pX;		y = pY;		z = pZ;
+	type = pType;		life = pLife;
+	size = pSize;		speed = pSpeed;
+	team = pTeam;
+	vx = (float)rand() / (float)RAND_MAX;
+	vy = (float)sqrt(1 - (vx * vx));
+	if ((float)rand() / (float)RAND_MAX > 0.5f)
+		vx *= -1;
+	if ((float)rand() / (float)RAND_MAX > 0.5f)
+		vy *= -1;
+	r = pR;		g = pG;		b = pB;
+	a = pA;
+	float s = size / 2;
+	bullet_Cooltime = 0.0f;
+	arrow_Cooltime = 0.0f;
+	collBox[0] = x - s;		collBox[1] = x + s;
+	collBox[2] = y - s;		collBox[3] = y + s;
 }
 
-Object::~Object() {
-	delete collbox;
+bool Object::outX(){
+	float s = size / 2;
+	if (x < (s - H_WIDTH)) {
+		x = s - H_WIDTH;
+		return true;
+	}
+	if (x > (H_WIDTH - s)) {
+		x = H_WIDTH - s;
+		return true;
+	}
+	return false;
+}
+
+bool Object::outY() {
+	float s = size / 2;
+	if (y < (s - H_HEIGHT)) {
+		y = s - H_HEIGHT;
+		return true;
+	}
+	if (y >(H_HEIGHT - s)) {
+		y = H_HEIGHT - s;
+		return true;
+	}
+	return false;
 }
 
 void Object::update(float frame_time) {
-	x += (v.first * frame_time / 1000.0f);
-	y += (v.second * frame_time / 1000.0f);
-	life -= (frame_time / 1000.0f);
-	bulletCooltime += (frame_time / 1000.0f);
-	arrowCooltime += (frame_time / 1000.0f);
-	if (!collisionOK())
-		colltime += (frame_time / 1000.0f);
-	if (x <= -250) {
-		x = -245;
-		v.first *= -1;
-	}
-	if (y <= -250) {
-		y = -245;
-		v.second *= -1;
-	}
-	if (x >= 250) {
-		x = 245;
-		v.first *= -1;
-	}
-	if (y >= 250) {
-		y = 245;
-		v.second *= -1;
-	}
-}
-
-CollBox* Object::getCollBox() {
-	float num = size / 2;
-	collbox = new CollBox(x - num, x + num, y + num, y - num);
-	return collbox;
-}
-
-void Object::changecolor(int key) {
-	if (key == RED) {
-		r = 1.0;
-		g = 0.0;
-		b = 0.0;
-	}
-	if (key == WHITE) {
-		r = 1.0;
-		g = 1.0;
-		b = 1.0;
-	}
+	x += (vx * frame_time * speed);
+	y += (vy * frame_time * speed);
+	bullet_Cooltime += frame_time;
+	arrow_Cooltime += frame_time;
+	if ( outX() )		vx *= -1;
+	if ( outY() )		vy *= -1;
+	float s = size / 2;
+	collBox[0] = x - s;		collBox[1] = x + s;
+	collBox[2] = y - s;		collBox[3] = y + s;
 }

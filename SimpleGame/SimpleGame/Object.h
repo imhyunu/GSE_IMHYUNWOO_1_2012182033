@@ -1,71 +1,42 @@
 #pragma once
-
-#include <string>
-#include <cstdlib>
-#include <fstream>
-#include <math.h>
-
-#include "CollisionBox.h"
-
-using namespace std;
-
-
-enum { RED, WHITE };
-
-class Object {
+class Object
+{
 public:
-
+	int type, team;
 	float x, y, z;
-	float size = 10.0f;
-	float r = 1.0f, g = 1.0f, b = 1.0f;
-	float a = 0.0f;
-	float veloc = 7;
-	float life = 3;
-	float nlife = 0;
-	float bulletCooltime = 0.0f;
-	float arrowCooltime = 0.0f;
-	float colltime = 0.0f;
-	int owner;
-	pair<float, float> v{ 0.0f, 0.0f };
-	CollBox* collbox;
+	float size, speed;
+	float r, g, b, a;
+	float vx, vy;
+	float life;
+	float collBox[4];
+	float bullet_Cooltime;
+	float arrow_Cooltime;
+	float charater_Cooltime;
 
-	Object(
-		float oX, float oY,
-		float oSpeed, float oLife, float oSize,
-		float oR, float oG, float oB
-	);
-	~Object();
+	Object(float pX, float pY, float pZ, float pType, int pTeam, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
 
+	bool outX();
+	bool outY();
+	bool lifeOff() { return (life <= 0.0f); }
+	bool bulletCoolOK(){
+		if (bullet_Cooltime > 5.0f) {
+			bullet_Cooltime = 0.0f;
+			return true;
+		}
+		return false;
+	}
+	bool arrowCoolOK(){
+		if (arrow_Cooltime > 3.0f) {
+			arrow_Cooltime = 0.0f;
+			return true;
+		}
+		return false;
+	}
+
+	void damage(float num) { life -= num; }
+	void changeColor(float pR, float pG, float pB) {
+		r = pR;		g = pG;		b = pB;
+	}
 	void update(float frame_time);
-
-	CollBox* getCollBox();
-
-	void changecolor(int key);
-	void setOwner(int num) {
-		owner = num;
-	}
-
-	float getLife() { return life; }
-	void damageLife(float num) { life -= num; }
-	bool lifeOff() { return (life < 0.0); }
-	bool collisionOK() {
-		if (colltime > 0.3f)
-			return true;
-		else
-			return false;
-	}
-	bool arrowCoolOK() {
-		if (arrowCooltime > 0.5f) {
-			arrowCooltime = 0.0f;
-			return true;
-		}
-		return false;
-	}
-	bool bulletCoolOK() {
-		if (bulletCooltime > 0.5f) {
-			bulletCooltime = 0.0f;
-			return true;
-		}
-		return false;
-	}
 };
+
