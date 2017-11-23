@@ -4,8 +4,8 @@
 SceneMgr::SceneMgr() {
 	srand(time(NULL));
 	g_Renderer = new Renderer(WIDTH, HEIGHT);
-	team1_Char_CoolTime = 7.0f;
-	team2_Char_CoolTime = 5.0f;
+	team1_Char_CoolTime = TEAM1_HARATER_COOLTIME;
+	team2_Char_CoolTime = TEAM2_HARATER_COOLTIME;
 	if (!g_Renderer->IsInitialized())
 	{
 		std::cout << "Renderer could not be initialized.. \n";
@@ -27,10 +27,10 @@ SceneMgr::~SceneMgr() {
 }
 
 bool SceneMgr::collision(Object* a, Object* b) {
-	if (a->collBox[0] > b->collBox[1])	return false;
-	if (a->collBox[1] < b->collBox[0])	return false;
-	if (a->collBox[2] > b->collBox[3])	return false;
-	if (a->collBox[3] < b->collBox[2])	return false;
+	if (a->collBox[ LEFT ] > b->collBox[ RIGHT ])	return false;
+	if (a->collBox[ RIGHT ] < b->collBox[ LEFT ])	return false;
+	if (a->collBox[ BOTTOM ] > b->collBox[ TOP ])	return false;
+	if (a->collBox[ TOP ] < b->collBox[ BOTTOM ])	return false;
 	return true;
 }
 
@@ -44,7 +44,7 @@ bool SceneMgr::myselfCollision(Object* a) {
 }
 
 bool SceneMgr::team1_Char_CoolTimeOK() {
-	if (team1_Char_CoolTime > 7.0f) {
+	if (team1_Char_CoolTime > TEAM1_HARATER_COOLTIME) {
 		team1_Char_CoolTime = 0.0f;
 		return true;
 	}
@@ -52,7 +52,7 @@ bool SceneMgr::team1_Char_CoolTimeOK() {
 }
 
 bool SceneMgr::team2_Char_CoolTimeOK() {
-	if (team2_Char_CoolTime > 5.0f) {
+	if (team2_Char_CoolTime > TEAM2_HARATER_COOLTIME) {
 		team2_Char_CoolTime = 0.0f;
 		return true;
 	}
@@ -70,40 +70,40 @@ void SceneMgr::input(float x, float y, int type, int team) {
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] == NULL) {
 			if (team == TEAM_1) {
-				if (type == CHARATER) {
-					objects[i] = new Object(x, y, 0, type, team, CHARATER_LIFE, CHARATER_SIZE, CHARATER_SPEED, 1, 0, 0, 1);
+				if (type == CHARACTER) {
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_GROUND, CHARACTER_LIFE, CHARACTER_SIZE, CHARACTER_SPEED, 1, 1, 1, 1);
 					return;
 				}
 				if (type == BUILDING) {
-					objects[i] = new Object(x, y, 0, type, team, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_SKY, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
 					return;
 
 				}
 				if (type == BULLET) {
-					objects[i] = new Object(x, y, 0, type, team, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 1, 0, 0, 1);
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 1, 0, 0, 1);
 					return;
 				}
 				if (type == ARROW) {
-					objects[i] = new Object(x, y, 0, type, team, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 0.5, 0.2, 0.7, 1);
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 0.5, 0.2, 0.7, 1);
 					return;
 				}
 			}
-			else {
-				if (type == CHARATER) {
-					objects[i] = new Object(x, y, 0, type, team, CHARATER_LIFE, CHARATER_SIZE, CHARATER_SPEED, 0, 0, 1, 1);
+			else if (team == TEAM_2) {
+				if (type == CHARACTER) {
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_GROUND, CHARACTER_LIFE, CHARACTER_SIZE, CHARACTER_SPEED, 1, 1, 1, 1);
 					return;
 				}
 				if (type == BUILDING) {
-					objects[i] = new Object(x, y, 0, type, team, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_SKY, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
 					return;
 
 				}
 				if (type == BULLET) {
-					objects[i] = new Object(x, y, 0, type, team, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 0, 0, 1, 1);
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 0, 0, 1, 1);
 					return;
 				}
 				if (type == ARROW) {
-					objects[i] = new Object(x, y, 0, type, team, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 1, 1, 0, 1);
+					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 1, 1, 0, 1);
 					return;
 				}
 			}
@@ -115,22 +115,69 @@ void SceneMgr::draw() {
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] != NULL) {
 			if (objects[i]->type != BUILDING) {
-				g_Renderer->DrawSolidRect(
-					objects[i]->x, objects[i]->y, objects[i]->z,
-					objects[i]->size, objects[i]->r,
-					objects[i]->g, objects[i]->b, objects[i]->a
-				);
+				if (objects[i]->type == CHARACTER) {
+					if (objects[i]->team == TEAM_1) {
+						g_Renderer->DrawSolidRectGauge(
+							objects[i]->x, objects[i]->y + CHARACTER_SIZE, objects[i]->z,
+							CHARACTER_GAUGE_WIDTH, CHARACTER_GAUGE_HEIGHT,
+							0.0f, 0.0f, 1.0f, 1.0f,
+							objects[i]->life / CHARACTER_LIFE,
+							LEVEL_GROUND
+						);
+						characterPng = g_Renderer->CreatePngTexture("./Resourses/character_Team1.png");
+					}
+					else {
+						g_Renderer->DrawSolidRectGauge(
+							objects[i]->x, objects[i]->y + CHARACTER_SIZE, objects[i]->z,
+							CHARACTER_GAUGE_WIDTH, CHARACTER_GAUGE_HEIGHT,
+							1.0f, 0.0f, 0.0f, 1.0f,
+							objects[i]->life / CHARACTER_LIFE,
+							LEVEL_GROUND
+						);
+						characterPng = g_Renderer->CreatePngTexture("./Resourses/character_Team2.png");
+					}
+					g_Renderer->DrawTexturedRect(
+						objects[i]->x, objects[i]->y, objects[i]->z,
+						objects[i]->size, objects[i]->r,
+						objects[i]->g, objects[i]->b, objects[i]->a,
+						characterPng, objects[i]->level
+					);
+				}
+				else {
+					g_Renderer->DrawSolidRect(
+						objects[i]->x, objects[i]->y, objects[i]->z,
+						objects[i]->size, objects[i]->r,
+						objects[i]->g, objects[i]->b, objects[i]->a,
+						objects[i]->level
+					);
+				}
 			}
 			if (objects[i]->type == BUILDING) {
-				if (objects[i]->team == TEAM_1)
+				if (objects[i]->team == TEAM_1) {
+					g_Renderer->DrawSolidRectGauge(
+						objects[i]->x, objects[i]->y + (BUILDING_SIZE / 1.5), objects[i]->z,
+						BUILDING_GAUGE_WIDTH, BUILDING_GAUGE_HEIGHT,
+						0.0f, 0.0f, 1.0f, 1.0f,
+						objects[i]->life / BUILDING_LIFE,
+						LEVEL_SKY
+					);
 					buildingPng = g_Renderer->CreatePngTexture("./Resourses/building_Team2.png");
-				else
+				}
+				else {
+					g_Renderer->DrawSolidRectGauge(
+						objects[i]->x, objects[i]->y + (BUILDING_SIZE / 1.5), objects[i]->z,
+						BUILDING_GAUGE_WIDTH, BUILDING_GAUGE_HEIGHT,
+						1.0f, 0.0f, 0.0f, 1.0f,
+						objects[i]->life / BUILDING_LIFE,
+						LEVEL_SKY
+					);
 					buildingPng = g_Renderer->CreatePngTexture("./Resourses/building_Team1.png");
+				}
 				g_Renderer->DrawTexturedRect(
 					objects[i]->x, objects[i]->y, objects[i]->z,
 					objects[i]->size, objects[i]->r,
 					objects[i]->g, objects[i]->b, objects[i]->a,
-					buildingPng
+					buildingPng, objects[i]->level
 				);
 			}
 		}
@@ -143,7 +190,7 @@ void SceneMgr::update(float frame_time) {
 	if (team2_Char_CoolTimeOK()) {
 		float x = ((float)rand() / (float)RAND_MAX * WIDTH) - H_WIDTH;
 		float y = ((float)rand() / (float)RAND_MAX * H_HEIGHT);
-		input(x, y, CHARATER, TEAM_2);
+		input(x, y, CHARACTER, TEAM_2);
 	}
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] != NULL) {
@@ -152,16 +199,20 @@ void SceneMgr::update(float frame_time) {
 				if (objects[i]->bulletCoolOK())
 					input(objects[i]->x, objects[i]->y, BULLET, objects[i]->team);
 			}
-			if (objects[i]->type == CHARATER) {
+			if (objects[i]->type == CHARACTER) {
 				if (objects[i]->arrowCoolOK())
 					input(objects[i]->x, objects[i]->y, ARROW, objects[i]->team);
+			}
+			if (objects[i]->type == BULLET || objects[i]->type == ARROW) {
+				if (objects[i]->lifeOff())
+					dieObject(i);
 			}
 		}
 	}
 
-	collisionObject(CHARATER, BUILDING);
-	collisionObject(CHARATER, BULLET);
-	collisionObject(CHARATER, ARROW);
+	collisionObject(CHARACTER, BUILDING);
+	collisionObject(CHARACTER, BULLET);
+	collisionObject(CHARACTER, ARROW);
 	collisionObject(BULLET, BUILDING);
 	collisionObject(ARROW, BUILDING);
 }
@@ -203,8 +254,10 @@ void SceneMgr::collisionObject(int type1, int type2) {
 			for (int j = 0; j < MAX_PLAYER_COUNT; ++j) {
 				if ((objects[j] != NULL) && (objects[j]->type == type2) && (objects[i]->team != objects[j]->team)) {
 					if (collision(objects[i], objects[j])) {
-						objects[i]->damage(objects[j]->life);
-						objects[j]->damage(objects[i]->life);
+						float damageI = objects[i]->life;
+						float damageJ = objects[j]->life;
+						objects[i]->damage(damageJ);
+						objects[j]->damage(damageI);
 						if (objects[i]->lifeOff())
 							dieObject(i);
 						if (objects[j]->lifeOff())

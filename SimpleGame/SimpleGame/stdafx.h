@@ -14,21 +14,36 @@
 #define HEIGHT		800
 #define H_HEIGHT	HEIGHT / 2
 
-#define CHARATER_SIZE		10
-#define CHARATER_SPEED		300
-#define CHARATER_LIFE		10
+#define LEVEL_GOD			0
+#define LEVEL_SKY			0.1
+#define LEVEL_GROUND					0.2
+#define LEVEL_UNDERGROUND				0.3
 
-#define BUILDING_SIZE		100
-#define BUILDING_LIFE		500
+#define CHARACTER_SIZE					30.0f
+#define CHARACTER_SPEED					300.0f
+#define CHARACTER_LIFE					100.0f
+#define CHARACTER_GAUGE_WIDTH			30.0f
+#define CHARACTER_GAUGE_HEIGHT			5.0f
 
-#define BULLET_SIZE			5
-#define BULLET_SPEED		600
-#define BULLET_LIFE			20
+#define BUILDING_SIZE					100.0f
+#define BUILDING_LIFE					500.0f
+#define BUILDING_GAUGE_WIDTH			100.0f
+#define BUILDING_GAUGE_HEIGHT			5.0f
 
-#define ARROW_SIZE			5
-#define ARROW_SPEED			100
-#define ARROW_LIFE			10
+#define BULLET_SIZE						4.0f
+#define BULLET_SPEED					600.0f
+#define BULLET_LIFE						15.0f
 
+#define ARROW_SIZE						4.0f
+#define ARROW_SPEED						100.0f
+#define ARROW_LIFE						10.0f
+
+#define BULLET_COOLTIME					0.5f
+#define ARROW_COOLTIME					0.3f
+#define TEAM1_HARATER_COOLTIME			1.0f
+#define TEAM2_HARATER_COOLTIME			1.0f
+
+enum CollisionBOX{ LEFT, RIGHT, BOTTOM, TOP };
 enum MouseState{ MOUSE_LEFT_UP, MOUSE_LEFT_DOWN };
-enum ObjectType{ CHARATER, BUILDING, ARROW, BULLET };
+enum ObjectType{ CHARACTER, BUILDING, ARROW, BULLET };
 enum Team{ TEAM_1, TEAM_2 };

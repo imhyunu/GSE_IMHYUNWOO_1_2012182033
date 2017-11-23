@@ -7,6 +7,7 @@ class SceneMgr {
 	Renderer *g_Renderer = NULL;
 	Object* objects[MAX_PLAYER_COUNT];
 	GLuint buildingPng;
+	GLuint characterPng;
 	float team1_Char_CoolTime;
 	float team2_Char_CoolTime;
 public:
