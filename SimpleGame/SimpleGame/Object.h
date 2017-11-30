@@ -12,7 +12,11 @@ public:
 	float bullet_Cooltime;
 	float arrow_Cooltime;
 	float charater_Cooltime;
-
+	float team1_char_ani_time, team2_char_ani_time;
+	float team1_build_ani_time, team2_build_ani_time;
+	int char_Team1_Draw, char_Team2_Draw[2];
+	int build_Team1_Draw, build_Team2_Draw;
+	float bullet_particle_time;
 	Object(float pX, float pY, float pZ, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
 
 	bool outX();

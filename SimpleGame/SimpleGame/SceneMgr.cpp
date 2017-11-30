@@ -112,6 +112,8 @@ void SceneMgr::input(float x, float y, int type, int team) {
 }
 
 void SceneMgr::draw() {
+	backgroundPng = g_Renderer->CreatePngTexture("./Resourses/Background.png");
+	g_Renderer->DrawTexturedRect(0, 0, 0, 800, 1, 1, 1, 0.7, backgroundPng, LEVEL_BACKGROUND);
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] != NULL) {
 			if (objects[i]->type != BUILDING) {
@@ -124,7 +126,17 @@ void SceneMgr::draw() {
 							objects[i]->life / CHARACTER_LIFE,
 							LEVEL_GROUND
 						);
-						characterPng = g_Renderer->CreatePngTexture("./Resourses/character_Team1.png");
+						characterPng = g_Renderer->CreatePngTexture("./Resourses/charAni_team1.png");
+
+
+						g_Renderer->DrawTexturedRectSeq(
+							objects[i]->x, objects[i]->y, objects[i]->z,
+							objects[i]->size, objects[i]->r,
+							objects[i]->g, objects[i]->b, objects[i]->a,
+							characterPng, objects[i]->char_Team1_Draw,
+							3, 4, 4,
+							objects[i]->level
+						);
 					}
 					else {
 						g_Renderer->DrawSolidRectGauge(
@@ -134,14 +146,17 @@ void SceneMgr::draw() {
 							objects[i]->life / CHARACTER_LIFE,
 							LEVEL_GROUND
 						);
-						characterPng = g_Renderer->CreatePngTexture("./Resourses/character_Team2.png");
+						characterPng = g_Renderer->CreatePngTexture("./Resourses/charAni_team2.png");
+
+						g_Renderer->DrawTexturedRectSeq(
+							objects[i]->x, objects[i]->y, objects[i]->z,
+							objects[i]->size, objects[i]->r,
+							objects[i]->g, objects[i]->b, objects[i]->a,
+							characterPng, objects[i]->char_Team2_Draw[0], 
+							objects[i]->char_Team2_Draw[1], 4, 4,
+							objects[i]->level
+						);
 					}
-					g_Renderer->DrawTexturedRect(
-						objects[i]->x, objects[i]->y, objects[i]->z,
-						objects[i]->size, objects[i]->r,
-						objects[i]->g, objects[i]->b, objects[i]->a,
-						characterPng, objects[i]->level
-					);
 				}
 				else {
 					g_Renderer->DrawSolidRect(
@@ -150,6 +165,24 @@ void SceneMgr::draw() {
 						objects[i]->g, objects[i]->b, objects[i]->a,
 						objects[i]->level
 					);
+					if (objects[i]->type == BULLET) {
+						if (objects[i]->team == TEAM_1) {
+							particlePng = g_Renderer->CreatePngTexture("./Resourses/particle1.png");
+							g_Renderer->DrawParticle(
+								objects[i]->x, objects[i]->y, objects[i]->z,
+								PATICLE_SIZE, 1, 1, 1, 1, -(objects[i]->vx), -(objects[i]->vy),
+								particlePng, objects[i]->bullet_particle_time
+							);
+						}
+						else {
+							particlePng = g_Renderer->CreatePngTexture("./Resourses/particle2.png");
+							g_Renderer->DrawParticle(
+								objects[i]->x, objects[i]->y, objects[i]->z,
+								PATICLE_SIZE, 1, 1, 1, 1, -(objects[i]->vx), -(objects[i]->vy),
+								particlePng, objects[i]->bullet_particle_time
+							);
+						}
+					}
 				}
 			}
 			if (objects[i]->type == BUILDING) {
@@ -161,7 +194,14 @@ void SceneMgr::draw() {
 						objects[i]->life / BUILDING_LIFE,
 						LEVEL_SKY
 					);
-					buildingPng = g_Renderer->CreatePngTexture("./Resourses/building_Team2.png");
+					buildingPng = g_Renderer->CreatePngTexture("./Resourses/buildingAni_Team1.png");
+					g_Renderer->DrawTexturedRectSeq(
+						objects[i]->x, objects[i]->y, objects[i]->z,
+						objects[i]->size, objects[i]->r,
+						objects[i]->g, objects[i]->b, objects[i]->a,
+						buildingPng, objects[i]->build_Team1_Draw, 3, 4, 4,
+						objects[i]->level
+					);
 				}
 				else {
 					g_Renderer->DrawSolidRectGauge(
@@ -171,14 +211,15 @@ void SceneMgr::draw() {
 						objects[i]->life / BUILDING_LIFE,
 						LEVEL_SKY
 					);
-					buildingPng = g_Renderer->CreatePngTexture("./Resourses/building_Team1.png");
+					buildingPng = g_Renderer->CreatePngTexture("./Resourses/buildingAni_Team2.png");
+					g_Renderer->DrawTexturedRectSeq(
+						objects[i]->x, objects[i]->y, objects[i]->z,
+						objects[i]->size, objects[i]->r,
+						objects[i]->g, objects[i]->b, objects[i]->a,
+						buildingPng, objects[i]->build_Team2_Draw, 0, 4, 4,
+						objects[i]->level
+					);
 				}
-				g_Renderer->DrawTexturedRect(
-					objects[i]->x, objects[i]->y, objects[i]->z,
-					objects[i]->size, objects[i]->r,
-					objects[i]->g, objects[i]->b, objects[i]->a,
-					buildingPng, objects[i]->level
-				);
 			}
 		}
 	}

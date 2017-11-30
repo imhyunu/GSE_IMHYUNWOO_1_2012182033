@@ -8,6 +8,8 @@ class SceneMgr {
 	Object* objects[MAX_PLAYER_COUNT];
 	GLuint buildingPng;
 	GLuint characterPng;
+	GLuint backgroundPng;
+	GLuint particlePng;
 	float team1_Char_CoolTime;
 	float team2_Char_CoolTime;
 public:
