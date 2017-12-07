@@ -17,6 +17,8 @@ public:
 	int char_Team1_Draw, char_Team2_Draw[2];
 	int build_Team1_Draw, build_Team2_Draw;
 	float bullet_particle_time;
+	float target_Range;
+	Object* target_Object;
 	Object(float pX, float pY, float pZ, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
 
 	bool outX();
@@ -24,11 +26,13 @@ public:
 	bool lifeOff() { return (life <= 0.0f); }
 	bool bulletCoolOK();
 	bool arrowCoolOK();
+	bool targetInRange(float oX, float oY);
 
 	void damage(float num) { life -= num; }
 	void changeColor(float pR, float pG, float pB) {
 		r = pR;		g = pG;		b = pB;
 	}
+	void set_Target(Object* t);
 	void update(float frame_time);
 };
 

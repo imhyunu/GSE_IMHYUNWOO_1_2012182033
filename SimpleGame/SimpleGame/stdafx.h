@@ -18,13 +18,14 @@
 #define LEVEL_SKY			0.1
 #define LEVEL_GROUND					0.2
 #define LEVEL_UNDERGROUND				0.3
-#define LEVEL_BACKGROUND				0.9
+#define LEVEL_BACKGROUND				1.0
 
 #define CHARACTER_SIZE					70.0f
 #define CHARACTER_SPEED					200.0f
 #define CHARACTER_LIFE					100.0f
 #define CHARACTER_GAUGE_WIDTH			30.0f
 #define CHARACTER_GAUGE_HEIGHT			5.0f
+#define TARGET_RANGE					100.0f
 
 #define BUILDING_SIZE					100.0f
 #define BUILDING_LIFE					500.0f

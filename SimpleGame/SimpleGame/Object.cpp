@@ -7,6 +7,8 @@ Object::Object(float pX, float pY, float pZ, float pType, int pTeam, float pLeve
 	type = pType;		life = pLife;
 	size = pSize;		speed = pSpeed;		level = pLevel;
 	team = pTeam;
+	target_Range = TARGET_RANGE;
+	target_Object = NULL;
 	vx = (float)rand() / (float)RAND_MAX;
 	vy = (float)sqrt(1 - (vx * vx));
 	if ((float)rand() / (float)RAND_MAX > 0.5f)
@@ -72,7 +74,27 @@ bool Object::arrowCoolOK() {
 	return false;
 }
 
+bool Object::targetInRange(float oX, float oY) {
+	float num = ((oX - x) * (oX - x)) + ((oY - y) * (oY - y));
+	if (num > (target_Range * target_Range)) {
+		return false;
+	}
+	return true;
+}
+
+void Object::set_Target(Object* t) {
+	target_Object = t;
+}
+
 void Object::update(float frame_time) {
+	if (target_Object != NULL) {
+		float num = sqrt(
+			((target_Object->x - x) * (target_Object->x - x)) +
+			((target_Object->y - y) * (target_Object->y - y))
+		);
+		vx = (target_Object->x - x) / num;
+		vy = (target_Object->y - y) / num;
+	}
 	x += (vx * frame_time * speed);
 	y += (vy * frame_time * speed);
 	bullet_Cooltime += frame_time;

@@ -4,8 +4,11 @@
 SceneMgr::SceneMgr() {
 	srand(time(NULL));
 	g_Renderer = new Renderer(WIDTH, HEIGHT);
+	m_sound = new Sound();
 	team1_Char_CoolTime = TEAM1_HARATER_COOLTIME;
 	team2_Char_CoolTime = TEAM2_HARATER_COOLTIME;
+	soundBGM = m_sound->CreateSound("./Dependencies/SoundSamples/TWICE-TT-320k.mp3");
+	bullet_soundBG = m_sound->CreateSound("./Dependencies/SoundSamples/8bit_gunloop_explosion.wav");
 	if (!g_Renderer->IsInitialized())
 	{
 		std::cout << "Renderer could not be initialized.. \n";
@@ -19,6 +22,7 @@ SceneMgr::SceneMgr() {
 	for (int i = 0; i < 3; ++i) {
 		input((i * 200) - 200, 330, BUILDING, TEAM_2);
 	}
+	m_sound->PlaySoundW(soundBGM, true, 0.2f);
 }
 
 SceneMgr::~SceneMgr() {
@@ -114,6 +118,8 @@ void SceneMgr::input(float x, float y, int type, int team) {
 void SceneMgr::draw() {
 	backgroundPng = g_Renderer->CreatePngTexture("./Resourses/Background.png");
 	g_Renderer->DrawTexturedRect(0, 0, 0, 800, 1, 1, 1, 0.7, backgroundPng, LEVEL_BACKGROUND);
+	g_Renderer->DrawTextW(-30, -150, GLUT_BITMAP_HELVETICA_18, 1, 1, 1, "TEAM 1");
+	g_Renderer->DrawTextW(-30, 150, GLUT_BITMAP_HELVETICA_18, 1, 1, 1, "TEAM 2");
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] != NULL) {
 			if (objects[i]->type != BUILDING) {
@@ -237,8 +243,10 @@ void SceneMgr::update(float frame_time) {
 		if (objects[i] != NULL) {
 			objects[i]->update(frame_time);
 			if (objects[i]->type == BUILDING) {
-				if (objects[i]->bulletCoolOK())
+				if (objects[i]->bulletCoolOK()) {
+					m_sound->PlaySoundW(bullet_soundBG, false, 0.2f);
 					input(objects[i]->x, objects[i]->y, BULLET, objects[i]->team);
+				}
 			}
 			if (objects[i]->type == CHARACTER) {
 				if (objects[i]->arrowCoolOK())
@@ -251,6 +259,7 @@ void SceneMgr::update(float frame_time) {
 		}
 	}
 
+	someoneTargetInRange(CHARACTER, CHARACTER);
 	collisionObject(CHARACTER, BUILDING);
 	collisionObject(CHARACTER, BULLET);
 	collisionObject(CHARACTER, ARROW);
@@ -289,6 +298,20 @@ void SceneMgr::coll_Cha_Bui() {
 	}
 }
 
+void SceneMgr::someoneTargetInRange(int type1, int type2) {
+	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
+		if (objects[i] != NULL && objects[i]->type == type1 && objects[i]->team == TEAM_2) {
+			for (int j = 0; j < MAX_PLAYER_COUNT; ++j) {
+				if (objects[j] != NULL && objects[j]->type == type2 && (objects[i]->team != objects[j]->team)) {
+					if (objects[i]->targetInRange(objects[j]->x, objects[j]->y)) {
+						objects[i]->set_Target(objects[j]);
+					}
+				}
+			}
+		}
+	}
+}
+
 void SceneMgr::collisionObject(int type1, int type2) {
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] != NULL && objects[i]->type == type1) {
@@ -299,10 +322,12 @@ void SceneMgr::collisionObject(int type1, int type2) {
 						float damageJ = objects[j]->life;
 						objects[i]->damage(damageJ);
 						objects[j]->damage(damageI);
-						if (objects[i]->lifeOff())
+						if (objects[i]->lifeOff()) {
 							dieObject(i);
-						if (objects[j]->lifeOff())
+						}
+						if (objects[j]->lifeOff()) {
 							dieObject(j);
+						}
 						break;
 					}
 				}
