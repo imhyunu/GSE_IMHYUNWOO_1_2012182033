@@ -7,6 +7,15 @@ SceneMgr::SceneMgr() {
 	m_sound = new Sound();
 	team1_Char_CoolTime = TEAM1_HARATER_COOLTIME;
 	team2_Char_CoolTime = TEAM2_HARATER_COOLTIME;
+	cltime = 0;
+	characterPng1 = g_Renderer->CreatePngTexture("./Resourses/charAni_team1.png");
+	characterPng2 = g_Renderer->CreatePngTexture("./Resourses/charAni_team2.png");
+	particlePng1 = g_Renderer->CreatePngTexture("./Resourses/particle1.png");
+	particlePng2 = g_Renderer->CreatePngTexture("./Resourses/particle2.png");
+	backgroundPng = g_Renderer->CreatePngTexture("./Resourses/Background.png");
+	buildingPng1 = g_Renderer->CreatePngTexture("./Resourses/buildingAni_Team1.png");
+	buildingPng2 = g_Renderer->CreatePngTexture("./Resourses/buildingAni_Team2.png");
+	m_texParticle = g_Renderer->CreatePngTexture("./Resourses/particle1.png");
 	soundBGM = m_sound->CreateSound("./Dependencies/SoundSamples/TWICE-TT-320k.mp3");
 	bullet_soundBG = m_sound->CreateSound("./Dependencies/SoundSamples/8bit_gunloop_explosion.wav");
 	if (!g_Renderer->IsInitialized())
@@ -17,10 +26,10 @@ SceneMgr::SceneMgr() {
 		objects[i] = NULL;
 
 	for (int i = 0; i < 3; ++i) {
-		input((i * 200) - 200, -330, BUILDING, TEAM_1);
+		input((i * 200) - 200, -330, 0, 0, BUILDING, TEAM_1);
 	}
 	for (int i = 0; i < 3; ++i) {
-		input((i * 200) - 200, 330, BUILDING, TEAM_2);
+		input((i * 200) - 200, 330, 0, 0, BUILDING, TEAM_2);
 	}
 	m_sound->PlaySoundW(soundBGM, true, 0.2f);
 }
@@ -70,7 +79,7 @@ void SceneMgr::dieObject(int num) {
 	}
 }
 
-void SceneMgr::input(float x, float y, int type, int team) {
+void SceneMgr::input(float x, float y, float tx, float ty, int type, int team) {
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] == NULL) {
 			if (team == TEAM_1) {
@@ -116,10 +125,10 @@ void SceneMgr::input(float x, float y, int type, int team) {
 }
 
 void SceneMgr::draw() {
-	backgroundPng = g_Renderer->CreatePngTexture("./Resourses/Background.png");
 	g_Renderer->DrawTexturedRect(0, 0, 0, 800, 1, 1, 1, 0.7, backgroundPng, LEVEL_BACKGROUND);
 	g_Renderer->DrawTextW(-30, -150, GLUT_BITMAP_HELVETICA_18, 1, 1, 1, "TEAM 1");
 	g_Renderer->DrawTextW(-30, 150, GLUT_BITMAP_HELVETICA_18, 1, 1, 1, "TEAM 2");
+	g_Renderer->DrawParticleClimate(0, 0, 0, 1, 1, 1, 1, 1, -0.1, -0.1, m_texParticle, cltime, 0.01);
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] != NULL) {
 			if (objects[i]->type != BUILDING) {
@@ -132,14 +141,13 @@ void SceneMgr::draw() {
 							objects[i]->life / CHARACTER_LIFE,
 							LEVEL_GROUND
 						);
-						characterPng = g_Renderer->CreatePngTexture("./Resourses/charAni_team1.png");
 
 
 						g_Renderer->DrawTexturedRectSeq(
 							objects[i]->x, objects[i]->y, objects[i]->z,
 							objects[i]->size, objects[i]->r,
 							objects[i]->g, objects[i]->b, objects[i]->a,
-							characterPng, objects[i]->char_Team1_Draw,
+							characterPng1, objects[i]->char_Team1_Draw,
 							3, 4, 4,
 							objects[i]->level
 						);
@@ -152,13 +160,12 @@ void SceneMgr::draw() {
 							objects[i]->life / CHARACTER_LIFE,
 							LEVEL_GROUND
 						);
-						characterPng = g_Renderer->CreatePngTexture("./Resourses/charAni_team2.png");
 
 						g_Renderer->DrawTexturedRectSeq(
 							objects[i]->x, objects[i]->y, objects[i]->z,
 							objects[i]->size, objects[i]->r,
 							objects[i]->g, objects[i]->b, objects[i]->a,
-							characterPng, objects[i]->char_Team2_Draw[0], 
+							characterPng2, objects[i]->char_Team2_Draw[0], 
 							objects[i]->char_Team2_Draw[1], 4, 4,
 							objects[i]->level
 						);
@@ -173,19 +180,17 @@ void SceneMgr::draw() {
 					);
 					if (objects[i]->type == BULLET) {
 						if (objects[i]->team == TEAM_1) {
-							particlePng = g_Renderer->CreatePngTexture("./Resourses/particle1.png");
 							g_Renderer->DrawParticle(
 								objects[i]->x, objects[i]->y, objects[i]->z,
 								PATICLE_SIZE, 1, 1, 1, 1, -(objects[i]->vx), -(objects[i]->vy),
-								particlePng, objects[i]->bullet_particle_time
+								particlePng1, objects[i]->bullet_particle_time, LEVEL_PARTICLE
 							);
 						}
 						else {
-							particlePng = g_Renderer->CreatePngTexture("./Resourses/particle2.png");
 							g_Renderer->DrawParticle(
 								objects[i]->x, objects[i]->y, objects[i]->z,
 								PATICLE_SIZE, 1, 1, 1, 1, -(objects[i]->vx), -(objects[i]->vy),
-								particlePng, objects[i]->bullet_particle_time
+								particlePng2, objects[i]->bullet_particle_time, LEVEL_PARTICLE
 							);
 						}
 					}
@@ -200,12 +205,11 @@ void SceneMgr::draw() {
 						objects[i]->life / BUILDING_LIFE,
 						LEVEL_SKY
 					);
-					buildingPng = g_Renderer->CreatePngTexture("./Resourses/buildingAni_Team1.png");
 					g_Renderer->DrawTexturedRectSeq(
 						objects[i]->x, objects[i]->y, objects[i]->z,
 						objects[i]->size, objects[i]->r,
 						objects[i]->g, objects[i]->b, objects[i]->a,
-						buildingPng, objects[i]->build_Team1_Draw, 3, 4, 4,
+						buildingPng1, objects[i]->build_Team1_Draw, 3, 4, 4,
 						objects[i]->level
 					);
 				}
@@ -217,12 +221,11 @@ void SceneMgr::draw() {
 						objects[i]->life / BUILDING_LIFE,
 						LEVEL_SKY
 					);
-					buildingPng = g_Renderer->CreatePngTexture("./Resourses/buildingAni_Team2.png");
 					g_Renderer->DrawTexturedRectSeq(
 						objects[i]->x, objects[i]->y, objects[i]->z,
 						objects[i]->size, objects[i]->r,
 						objects[i]->g, objects[i]->b, objects[i]->a,
-						buildingPng, objects[i]->build_Team2_Draw, 0, 4, 4,
+						buildingPng2, objects[i]->build_Team2_Draw, 0, 4, 4,
 						objects[i]->level
 					);
 				}
@@ -234,10 +237,11 @@ void SceneMgr::draw() {
 void SceneMgr::update(float frame_time) {
 	team1_Char_CoolTime += frame_time;
 	team2_Char_CoolTime += frame_time;
+	cltime += frame_time;
 	if (team2_Char_CoolTimeOK()) {
 		float x = ((float)rand() / (float)RAND_MAX * WIDTH) - H_WIDTH;
-		float y = ((float)rand() / (float)RAND_MAX * H_HEIGHT);
-		input(x, y, CHARACTER, TEAM_2);
+		float y = ((float)rand() / (float)RAND_MAX * (H_HEIGHT / 4.0f)) + 300.0f;
+		input(x, y, 0, 0, CHARACTER, TEAM_2);
 	}
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
 		if (objects[i] != NULL) {
@@ -245,12 +249,12 @@ void SceneMgr::update(float frame_time) {
 			if (objects[i]->type == BUILDING) {
 				if (objects[i]->bulletCoolOK()) {
 					m_sound->PlaySoundW(bullet_soundBG, false, 0.2f);
-					input(objects[i]->x, objects[i]->y, BULLET, objects[i]->team);
+					input(objects[i]->x, objects[i]->y, 0, 0, BULLET, objects[i]->team);
 				}
 			}
 			if (objects[i]->type == CHARACTER) {
 				if (objects[i]->arrowCoolOK())
-					input(objects[i]->x, objects[i]->y, ARROW, objects[i]->team);
+					input(objects[i]->x, objects[i]->y, 0, 0, ARROW, objects[i]->team);
 			}
 			if (objects[i]->type == BULLET || objects[i]->type == ARROW) {
 				if (objects[i]->lifeOff())
@@ -260,6 +264,7 @@ void SceneMgr::update(float frame_time) {
 	}
 
 	someoneTargetInRange(CHARACTER, CHARACTER);
+	someoneTargetInRange(CHARACTER, BUILDING);
 	collisionObject(CHARACTER, BUILDING);
 	collisionObject(CHARACTER, BULLET);
 	collisionObject(CHARACTER, ARROW);
@@ -305,6 +310,7 @@ void SceneMgr::someoneTargetInRange(int type1, int type2) {
 				if (objects[j] != NULL && objects[j]->type == type2 && (objects[i]->team != objects[j]->team)) {
 					if (objects[i]->targetInRange(objects[j]->x, objects[j]->y)) {
 						objects[i]->set_Target(objects[j]);
+						objects[i]->findState = 1;
 					}
 				}
 			}

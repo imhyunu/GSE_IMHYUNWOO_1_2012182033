@@ -18,22 +18,25 @@
 #define LEVEL_SKY			0.1
 #define LEVEL_GROUND					0.2
 #define LEVEL_UNDERGROUND				0.3
+#define LEVEL_PARTICLE					0.4
 #define LEVEL_BACKGROUND				1.0
 
 #define CHARACTER_SIZE					70.0f
-#define CHARACTER_SPEED					200.0f
+#define CHARACTER_SPEED					50.0f
 #define CHARACTER_LIFE					100.0f
 #define CHARACTER_GAUGE_WIDTH			30.0f
 #define CHARACTER_GAUGE_HEIGHT			5.0f
+#define CHARACTER_VIEW					100.0f
 #define TARGET_RANGE					100.0f
 
 #define BUILDING_SIZE					100.0f
 #define BUILDING_LIFE					500.0f
 #define BUILDING_GAUGE_WIDTH			100.0f
 #define BUILDING_GAUGE_HEIGHT			5.0f
+#define BUILDING_VIEW					150.0f
 
 #define BULLET_SIZE						4.0f
-#define BULLET_SPEED					200.0f
+#define BULLET_SPEED					100.0f
 #define BULLET_LIFE						15.0f
 
 #define ARROW_SIZE						4.0f
@@ -45,9 +48,9 @@
 #define BULLET_COOLTIME					2.0f
 #define ARROW_COOLTIME					1.0f
 #define TEAM1_HARATER_COOLTIME			1.0f
-#define TEAM2_HARATER_COOLTIME			1.0f
+#define TEAM2_HARATER_COOLTIME			3.0f
 #define TEAM1_CHARACTHER_ANI_TIME		0.2f
-#define TEAM2_CHARACTHER_ANI_TIME		0.05f
+#define TEAM2_CHARACTHER_ANI_TIME		0.1f
 #define TEAM1_BUILDING_ANI_TIME			0.1f
 #define TEAM2_BUILDING_ANI_TIME			0.1f
 

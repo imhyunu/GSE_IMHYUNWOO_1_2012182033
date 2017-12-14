@@ -9,7 +9,9 @@ Object::Object(float pX, float pY, float pZ, float pType, int pTeam, float pLeve
 	team = pTeam;
 	target_Range = TARGET_RANGE;
 	target_Object = NULL;
-	vx = (float)rand() / (float)RAND_MAX;
+	findState = 0;
+
+	vx = (float)rand() / ((float)RAND_MAX * 2.0f);
 	vy = (float)sqrt(1 - (vx * vx));
 	if ((float)rand() / (float)RAND_MAX > 0.5f)
 		vx *= -1;
@@ -28,6 +30,55 @@ Object::Object(float pX, float pY, float pZ, float pType, int pTeam, float pLeve
 	char_Team2_Draw[1] = 0;
 	build_Team1_Draw = build_Team2_Draw = 0;
 	bullet_particle_time = 0;
+	if (pType == CHARACTER) {
+		view_Range = CHARACTER_VIEW;
+	}
+	else if(pType == BUILDING){
+		view_Range = BUILDING_VIEW;
+	}
+	collBox[0] = x - s;		collBox[1] = x + s;
+	collBox[2] = y - s;		collBox[3] = y + s;
+}
+
+Object::Object(float pX, float pY, float pZ, float tx, float ty, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA) {
+	x = pX;		y = pY;		z = pZ;
+	type = pType;		life = pLife;
+	size = pSize;		speed = pSpeed;		level = pLevel;
+	team = pTeam;
+	target_Range = TARGET_RANGE;
+	target_Object = NULL;
+	findState = 0;
+	if (type == BULLET) {
+		vx = tx;
+		vy = ty;
+	}
+	else {
+		vx = (float)rand() / ((float)RAND_MAX * 2.0f);
+		vy = (float)sqrt(1 - (vx * vx));
+		if ((float)rand() / (float)RAND_MAX > 0.5f)
+			vx *= -1;
+		if (team == TEAM_2)
+			vy *= -1;
+	}
+	r = pR;		g = pG;		b = pB;
+	a = pA;
+	float s = size / 2;
+	bullet_Cooltime = BULLET_COOLTIME;
+	arrow_Cooltime = ARROW_COOLTIME;
+	team1_char_ani_time = 0.0f;
+	team2_char_ani_time = 0.0f;
+	team1_build_ani_time = 0.0f;
+	team2_build_ani_time = 0.0f;
+	char_Team2_Draw[0] = 0;
+	char_Team2_Draw[1] = 0;
+	build_Team1_Draw = build_Team2_Draw = 0;
+	bullet_particle_time = 0;
+	if (pType == CHARACTER) {
+		view_Range = CHARACTER_VIEW;
+	}
+	else if (pType == BUILDING) {
+		view_Range = BUILDING_VIEW;
+	}
 	collBox[0] = x - s;		collBox[1] = x + s;
 	collBox[2] = y - s;		collBox[3] = y + s;
 }
@@ -67,7 +118,7 @@ bool Object::bulletCoolOK() {
 }
 
 bool Object::arrowCoolOK() {
-	if (arrow_Cooltime > ARROW_COOLTIME) {
+	if (arrow_Cooltime > ARROW_COOLTIME && findState == 1) {
 		arrow_Cooltime = 0.0f;
 		return true;
 	}
@@ -92,11 +143,13 @@ void Object::update(float frame_time) {
 			((target_Object->x - x) * (target_Object->x - x)) +
 			((target_Object->y - y) * (target_Object->y - y))
 		);
-		vx = (target_Object->x - x) / num;
-		vy = (target_Object->y - y) / num;
+		targetX = (target_Object->x - x) / num;
+		targetY = (target_Object->y - y) / num;
 	}
-	x += (vx * frame_time * speed);
-	y += (vy * frame_time * speed);
+	if (findState == 0) {
+		x += (vx * frame_time * speed);
+		y += (vy * frame_time * speed);
+	}
 	bullet_Cooltime += frame_time;
 	arrow_Cooltime += frame_time;
 	team1_char_ani_time += frame_time;

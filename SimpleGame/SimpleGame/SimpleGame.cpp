@@ -53,7 +53,7 @@ void MouseInput(int button, int state, int x, int y)
 		if (mouse_State == MOUSE_LEFT_DOWN) {
 			mouse_State = MOUSE_LEFT_UP;
 			if ( y > H_HEIGHT && sceneMgr->team1_Char_CoolTimeOK())
-				sceneMgr->input(x - H_WIDTH, H_HEIGHT - y, CHARACTER, TEAM_1);
+				sceneMgr->input(x - H_WIDTH, H_HEIGHT - y, 0, 0, CHARACTER, TEAM_1);
 		}
 	}
 

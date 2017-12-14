@@ -4,6 +4,7 @@ class Object
 public:
 	int type, team, level;
 	float x, y, z;
+	float targetX, targetY;
 	float size, speed;
 	float r, g, b, a;
 	float vx, vy;
@@ -18,8 +19,11 @@ public:
 	int build_Team1_Draw, build_Team2_Draw;
 	float bullet_particle_time;
 	float target_Range;
+	float view_Range;
+	int findState;
 	Object* target_Object;
 	Object(float pX, float pY, float pZ, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
+	Object(float pX, float pY, float pZ, float tx, float ty, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
 
 	bool outX();
 	bool outY();
