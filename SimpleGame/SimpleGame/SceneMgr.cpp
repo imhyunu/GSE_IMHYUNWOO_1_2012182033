@@ -84,39 +84,39 @@ void SceneMgr::input(float x, float y, float tx, float ty, int type, int team) {
 		if (objects[i] == NULL) {
 			if (team == TEAM_1) {
 				if (type == CHARACTER) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_GROUND, CHARACTER_LIFE, CHARACTER_SIZE, CHARACTER_SPEED, 1, 1, 1, 1);
+					objects[i] = new Object(x, y, 0, CHARACTER_TARGET_RANGE, type, team, LEVEL_GROUND, CHARACTER_LIFE, CHARACTER_SIZE, CHARACTER_SPEED, 1, 1, 1, 1);
 					return;
 				}
 				if (type == BUILDING) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_SKY, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
+					objects[i] = new Object(x, y, 0, BUILDING_TARGET_RANGE, type, team, LEVEL_SKY, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
 					return;
 
 				}
 				if (type == BULLET) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 1, 0, 0, 1);
+					objects[i] = new Object(x, y, 0, tx, ty, type, team, LEVEL_UNDERGROUND, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 1, 0, 0, 1);
 					return;
 				}
 				if (type == ARROW) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 0.5, 0.2, 0.7, 1);
+					objects[i] = new Object(x, y, 0, tx, ty, type, team, LEVEL_UNDERGROUND, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 0.5, 0.2, 0.7, 1);
 					return;
 				}
 			}
 			else if (team == TEAM_2) {
 				if (type == CHARACTER) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_GROUND, CHARACTER_LIFE, CHARACTER_SIZE, CHARACTER_SPEED, 1, 1, 1, 1);
+					objects[i] = new Object(x, y, 0, CHARACTER_TARGET_RANGE, type, team, LEVEL_GROUND, CHARACTER_LIFE, CHARACTER_SIZE, CHARACTER_SPEED, 1, 1, 1, 1);
 					return;
 				}
 				if (type == BUILDING) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_SKY, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
+					objects[i] = new Object(x, y, 0, BUILDING_TARGET_RANGE, type, team, LEVEL_SKY, BUILDING_LIFE, BUILDING_SIZE, 0, 1, 1, 1, 1);
 					return;
 
 				}
 				if (type == BULLET) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 0, 0, 1, 1);
+					objects[i] = new Object(x, y, 0, tx, ty, type, team, LEVEL_UNDERGROUND, BULLET_LIFE, BULLET_SIZE, BULLET_SPEED, 0, 0, 1, 1);
 					return;
 				}
 				if (type == ARROW) {
-					objects[i] = new Object(x, y, 0, type, team, LEVEL_UNDERGROUND, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 1, 1, 0, 1);
+					objects[i] = new Object(x, y, 0, tx, ty, type, team, LEVEL_UNDERGROUND, ARROW_LIFE, ARROW_SIZE, ARROW_SPEED, 1, 1, 0, 1);
 					return;
 				}
 			}
@@ -240,7 +240,7 @@ void SceneMgr::update(float frame_time) {
 	cltime += frame_time;
 	if (team2_Char_CoolTimeOK()) {
 		float x = ((float)rand() / (float)RAND_MAX * WIDTH) - H_WIDTH;
-		float y = ((float)rand() / (float)RAND_MAX * (H_HEIGHT / 4.0f)) + 300.0f;
+		float y = ((float)rand() / (float)RAND_MAX * (H_HEIGHT / 4.0f)) + 260.0f;
 		input(x, y, 0, 0, CHARACTER, TEAM_2);
 	}
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
@@ -248,13 +248,13 @@ void SceneMgr::update(float frame_time) {
 			objects[i]->update(frame_time);
 			if (objects[i]->type == BUILDING) {
 				if (objects[i]->bulletCoolOK()) {
-					m_sound->PlaySoundW(bullet_soundBG, false, 0.2f);
-					input(objects[i]->x, objects[i]->y, 0, 0, BULLET, objects[i]->team);
+					m_sound->PlaySoundW(bullet_soundBG, false, 0.1f);
+					input(objects[i]->x, objects[i]->y, objects[i]->targetX, objects[i]->targetY, BULLET, objects[i]->team);
 				}
 			}
 			if (objects[i]->type == CHARACTER) {
 				if (objects[i]->arrowCoolOK())
-					input(objects[i]->x, objects[i]->y, 0, 0, ARROW, objects[i]->team);
+					input(objects[i]->x, objects[i]->y, objects[i]->targetX, objects[i]->targetY, ARROW, objects[i]->team);
 			}
 			if (objects[i]->type == BULLET || objects[i]->type == ARROW) {
 				if (objects[i]->lifeOff())
@@ -265,6 +265,7 @@ void SceneMgr::update(float frame_time) {
 
 	someoneTargetInRange(CHARACTER, CHARACTER);
 	someoneTargetInRange(CHARACTER, BUILDING);
+	someoneTargetInRange(BUILDING, CHARACTER);
 	collisionObject(CHARACTER, BUILDING);
 	collisionObject(CHARACTER, BULLET);
 	collisionObject(CHARACTER, ARROW);
@@ -305,7 +306,7 @@ void SceneMgr::coll_Cha_Bui() {
 
 void SceneMgr::someoneTargetInRange(int type1, int type2) {
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i) {
-		if (objects[i] != NULL && objects[i]->type == type1 && objects[i]->team == TEAM_2) {
+		if (objects[i] != NULL && objects[i]->type == type1) {
 			for (int j = 0; j < MAX_PLAYER_COUNT; ++j) {
 				if (objects[j] != NULL && objects[j]->type == type2 && (objects[i]->team != objects[j]->team)) {
 					if (objects[i]->targetInRange(objects[j]->x, objects[j]->y)) {
@@ -329,12 +330,36 @@ void SceneMgr::collisionObject(int type1, int type2) {
 						objects[i]->damage(damageJ);
 						objects[j]->damage(damageI);
 						if (objects[i]->lifeOff()) {
+							if (objects[i]->type == CHARACTER || objects[i]->type == BUILDING) {
+								for (int k = 0; k < MAX_PLAYER_COUNT; ++k) {
+									if (objects[k] != NULL) {
+										if (objects[k]->target_Object == objects[i]) {
+											objects[k]->die_Target();
+										}
+									}
+								}
+							}
 							dieObject(i);
 						}
 						if (objects[j]->lifeOff()) {
+							if (objects[j]->type == CHARACTER || objects[j]->type == BUILDING) {
+								for (int k = 0; k < MAX_PLAYER_COUNT; ++k) {
+									if (objects[k] != NULL) {
+										if (objects[k]->target_Object == objects[j]) {
+											objects[k]->die_Target();
+										}
+									}
+								}
+							}
 							dieObject(j);
 						}
 						break;
+					}
+					if (objects[i] == NULL) {
+						objects[j]->die_Target();
+					}
+					if (objects[j] == NULL) {
+						objects[i]->die_Target();
 					}
 				}
 			}

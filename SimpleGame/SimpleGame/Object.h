@@ -22,7 +22,7 @@ public:
 	float view_Range;
 	int findState;
 	Object* target_Object;
-	Object(float pX, float pY, float pZ, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
+	Object(float pX, float pY, float pZ, float tRange, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
 	Object(float pX, float pY, float pZ, float tx, float ty, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA);
 
 	bool outX();
@@ -37,6 +37,7 @@ public:
 		r = pR;		g = pG;		b = pB;
 	}
 	void set_Target(Object* t);
+	void die_Target();
 	void update(float frame_time);
 };
 

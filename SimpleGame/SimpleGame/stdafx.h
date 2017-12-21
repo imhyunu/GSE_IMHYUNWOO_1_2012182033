@@ -27,13 +27,14 @@
 #define CHARACTER_GAUGE_WIDTH			30.0f
 #define CHARACTER_GAUGE_HEIGHT			5.0f
 #define CHARACTER_VIEW					100.0f
-#define TARGET_RANGE					100.0f
+#define CHARACTER_TARGET_RANGE			100.0f
 
 #define BUILDING_SIZE					100.0f
 #define BUILDING_LIFE					500.0f
 #define BUILDING_GAUGE_WIDTH			100.0f
 #define BUILDING_GAUGE_HEIGHT			5.0f
 #define BUILDING_VIEW					150.0f
+#define BUILDING_TARGET_RANGE			200.0f
 
 #define BULLET_SIZE						4.0f
 #define BULLET_SPEED					100.0f
@@ -45,7 +46,7 @@
 
 #define PATICLE_SIZE					5
 
-#define BULLET_COOLTIME					2.0f
+#define BULLET_COOLTIME					0.7f
 #define ARROW_COOLTIME					1.0f
 #define TEAM1_HARATER_COOLTIME			1.0f
 #define TEAM2_HARATER_COOLTIME			3.0f

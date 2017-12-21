@@ -2,21 +2,23 @@
 #include "Object.h"
 
 
-Object::Object(float pX, float pY, float pZ, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA) {
+Object::Object(float pX, float pY, float pZ, float tRange, float pType, int pTeam, float pLevel, float pLife, float pSize, float pSpeed, float pR, float pG, float pB, float pA) {
 	x = pX;		y = pY;		z = pZ;
 	type = pType;		life = pLife;
 	size = pSize;		speed = pSpeed;		level = pLevel;
 	team = pTeam;
-	target_Range = TARGET_RANGE;
+	target_Range = tRange;
 	target_Object = NULL;
 	findState = 0;
 
-	vx = (float)rand() / ((float)RAND_MAX * 2.0f);
-	vy = (float)sqrt(1 - (vx * vx));
-	if ((float)rand() / (float)RAND_MAX > 0.5f)
-		vx *= -1;
-	if (team == TEAM_2)
-		vy *= -1;
+	if (team == TEAM_1) {
+		vx = 0.0f;
+		vy = 1.0f;
+	}
+	else {
+		vx = 0.0f;
+		vy = -1.0f;
+	}
 	r = pR;		g = pG;		b = pB;
 	a = pA;
 	float s = size / 2;
@@ -45,21 +47,10 @@ Object::Object(float pX, float pY, float pZ, float tx, float ty, float pType, in
 	type = pType;		life = pLife;
 	size = pSize;		speed = pSpeed;		level = pLevel;
 	team = pTeam;
-	target_Range = TARGET_RANGE;
 	target_Object = NULL;
 	findState = 0;
-	if (type == BULLET) {
-		vx = tx;
-		vy = ty;
-	}
-	else {
-		vx = (float)rand() / ((float)RAND_MAX * 2.0f);
-		vy = (float)sqrt(1 - (vx * vx));
-		if ((float)rand() / (float)RAND_MAX > 0.5f)
-			vx *= -1;
-		if (team == TEAM_2)
-			vy *= -1;
-	}
+	vx = tx;
+	vy = ty;
 	r = pR;		g = pG;		b = pB;
 	a = pA;
 	float s = size / 2;
@@ -110,7 +101,7 @@ bool Object::outY() {
 }
 
 bool Object::bulletCoolOK() {
-	if (bullet_Cooltime > BULLET_COOLTIME) {
+	if (bullet_Cooltime > BULLET_COOLTIME && findState == 1) {
 		bullet_Cooltime = 0.0f;
 		return true;
 	}
@@ -137,6 +128,16 @@ void Object::set_Target(Object* t) {
 	target_Object = t;
 }
 
+void Object::die_Target() {
+	target_Object = NULL;
+	delete target_Object;
+	findState = 0; 
+	if (team == TEAM_1)
+		vy = 1.0f;
+	else
+		vy = -1.0f;
+}
+
 void Object::update(float frame_time) {
 	if (target_Object != NULL) {
 		float num = sqrt(
@@ -152,7 +153,8 @@ void Object::update(float frame_time) {
 	}
 	bullet_Cooltime += frame_time;
 	arrow_Cooltime += frame_time;
-	team1_char_ani_time += frame_time;
+	if(team != TEAM_1 || findState == 0)
+		team1_char_ani_time += frame_time;
 	team1_build_ani_time += frame_time;
 	team2_build_ani_time += frame_time;
 	bullet_particle_time += frame_time;
@@ -196,8 +198,12 @@ void Object::update(float frame_time) {
 			life = 0;
 	}
 	if (outY())	{
-		if (type == CHARACTER)
-			vy *= -1;
+		if (type == CHARACTER) {
+			vy = (float)rand() / RAND_MAX;
+			vx = sqrt(1 - (vy * vy));
+			if (((float)rand() / RAND_MAX) > 0.5)
+				vx *= -1;
+		}
 		else
 			life = 0;
 	}
